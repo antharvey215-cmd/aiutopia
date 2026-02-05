@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aiutopia - Causal Intelligence Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-section label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .results h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .insight {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .insight h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .insight p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .confidence {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #10b981;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .examples {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e8eaf6;
+            border-radius: 10px;
+        }
+
+        .examples h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .example {
+            background: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .example:hover {
+            background: #f5f5f5;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 AIUTOPIA</h1>
+            <p>AI-Powered Causal Intelligence Platform</p>
+        </div>
+
+        <div class="main-card">
+            <div class="input-section">
+                <label for="dataInput">📊 Describe Your Data or Paste CSV:</label>
+                <textarea 
+                    id="dataInput" 
+                    placeholder="Example: I have marketing spend data, customer acquisition numbers, and revenue figures from the past 6 months. Marketing ranges from $10K-$15K per month, customers from 40-70, and revenue from $25K-$40K. What drives revenue growth?"
+                ></textarea>
+            </div>
+
+            <div class="examples">
+                <h3>📝 Quick Examples (Click to use):</h3>
+                <div class="example" onclick="useExample(1)">
+                    💼 Marketing → Sales Analysis
+                </div>
+                <div class="example" onclick="useExample(2)">
+                    🏪 Retail: Weather Impact on Sales
+                </div>
+                <div class="example" onclick="useExample(3)">
+                    📱 SaaS: Customer Churn Analysis
+                </div>
+            </div>
+
+            <button class="btn" onclick="analyzeData()">
+                🚀 Analyze with AI
+            </button>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing causal relationships...</p>
+            </div>
+
+            <div class="results" id="results">
+                <h2>🎯 Causal Analysis Results</h2>
+                <div id="resultsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const examples = {
+            1: "I have 6 months of marketing data:\nMonth 1: $10K spend, 42 customers, $25K revenue\nMonth 2: $12K spend, 51 customers, $30K revenue\nMonth 3: $15K spend, 68 customers, $38K revenue\nMonth 4: $13K spend, 55 customers, $32K revenue\nMonth 5: $14K spend, 60 customers, $34K revenue\nMonth 6: $11K spend, 48 customers, $28K revenue\n\nWhat drives revenue growth?",
+            
+            2: "My retail store data shows:\n- Sunny days: Average $12K sales, 280 customers\n- Rainy days: Average $8K sales, 180 customers\n- Cold days (<50°F): $9K sales, 200 customers\n- Warm days (70-80°F): $13K sales, 310 customers\n\nHow does weather affect my business?",
+            
+            3: "SaaS customer data:\n- Customers using <3 features: 45% churn rate\n- Customers using 3-5 features: 20% churn\n- Customers using 6+ features: 5% churn\n- Support tickets >5/month: 60% churn\n- Support tickets <2/month: 12% churn\n\nWhat causes churn?"
+        };
+
+        function useExample(num) {
+            document.getElementById('dataInput').value = examples[num];
+        }
+
+        async function analyzeData() {
+            const data = document.getElementById('dataInput').value.trim();
+            
+            if (!data) {
+                alert('Please enter some data to analyze!');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('results').classList.remove('show');
+
+            // Simulate analysis (in production, this would call the API)
+            setTimeout(() => {
+                showResults(data);
+            }, 2000);
+        }
+
+        function showResults(data) {
+            // Hide loading
+            document.getElementById('loading').classList.remove('show');
+
+            // Generate insights based on input
+            const insights = generateInsights(data);
+
+            // Display results
+            const resultsContent = document.getElementById('resultsContent');
+            resultsContent.innerHTML = insights;
+            document.getElementById('results').classList.add('show');
+
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function generateInsights(data) {
+            // Demo insights (in production, this would be AI-generated)
+            const dataLower = data.toLowerCase();
+            let insights = '';
+
+            if (dataLower.includes('marketing') || dataLower.includes('spend')) {
+                insights += `
+                    <div class="insight">
+                        <h3>✅ Causal Relationship 1: Marketing → Customer Acquisition</h3>
+                        <p><strong>Effect Strength:</strong> Strong (β = 0.68)</p>
+                        <p><strong>Mechanism:</strong> Increased marketing spend drives brand visibility and awareness, leading to more customer inquiries and acquisitions.</p>
+                        <span class="confidence">87% Confidence</span>
+                    </div>
+
+                    <div class="insight">
+                        <h3>✅ Causal Relationship 2: Customer Acquisition → Revenue</h3>
+                        <p><strong>Effect Strength:</strong> Very Strong (β = 0.92)</p>
+                        <p><strong>Mechanism:</strong> More customers directly generate more sales transactions and revenue.</p>
+                        <span class="confidence">94% Confidence</span>
+                    </div>
+
+                    <div class="insight">
+                        <h3>🎯 Recommended Intervention</h3>
+                        <p><strong>Action:</strong> Increase marketing budget by 25%</p>
+                        <p><strong>Expected Impact:</strong> +17% customers, +15.6% revenue</p>
+                        <p><strong>ROI:</strong> $1 invested → $6.24 return</p>
+                        <p><strong>Implementation:</strong> Focus on highest-performing channels first</p>
+                        <span class="confidence">85% Confidence</span>
+                    </div>
+                `;
+            } else if (dataLower.includes('weather') || dataLower.includes('rain') || dataLower.includes('sunny')) {
+                insights += `
+                    <div class="insight">
+                        <h3>✅ Causal Relationship: Weather → Foot Traffic</h3>
+                        <p><strong>Effect:</strong> Sunny weather increases foot traffic by 35-40%</p>
+                        <p><strong>Mechanism:</strong> Pleasant weather encourages outdoor activities and shopping trips.</p>
+                        <span class="confidence">91% Confidence</span>
+                    </div>
+
+                    <div class="insight">
+                        <h3>✅ Causal Relationship: Temperature → Sales</h3>
+                        <p><strong>Effect:</strong> Optimal temperature range (70-80°F) maximizes sales</p>
+                        <p><strong>Mechanism:</strong> Comfortable temperatures increase shopping duration and purchase likelihood.</p>
+                        <span class="confidence">88% Confidence</span>
+                    </div>
+
+                    <div class="insight">
+                        <h3>🎯 Recommended Interventions</h3>
+                        <p><strong>1. Weather-Based Promotions:</strong> Offer rain-day discounts to offset traffic decline</p>
+                        <p><strong>2. Staffing Optimization:</strong> Schedule more staff on predicted sunny days</p>
+                        <p><strong>3. Inventory Planning:</strong> Stock weather-appropriate products based on forecasts</p>
+                        <p><strong>Expected Impact:</strong> +12-18% revenue optimization</p>
+                        <span class="confidence">82% Confidence</span>
+                    </div>
+                `;
+            } else if (dataLower.includes('churn') || dataLower.includes('feature') || dataLower.includes('support')) {
+                insights += `
+                    <div class="insight">
+                        <h3>✅ Causal Relationship: Feature Usage → Retention</h3>
+                        <p><strong>Effect:</strong> Using 6+ features reduces churn by 89% vs. using <3 features</p>
+                        <p><strong>Mechanism:</strong> Higher feature engagement increases product value perception and switching costs.</p>
+                        <span class="confidence">93% Confidence</span>
+                    </div>
+
+                    <div class="insight">
+                        <h3>✅ Causal Relationship: Support Tickets → Churn</h3>
+                        <p><strong>Effect:</strong> >5 support tickets/month → 5× higher churn risk</p>
+                        <p><strong>Mechanism:</strong> Frequent support needs indicate product-market fit issues or onboarding failures.</p>
+                        <span class="confidence">89% Confidence</span>
+                    </div>
+
+                    <div class="insight">
+                        <h3>🎯 Recommended Interventions</h3>
+                        <p><strong>Priority 1:</strong> Implement feature discovery program - guide users to adopt 6+ features</p>
+                        <p><strong>Priority 2:</strong> Proactive support for users with 3+ tickets - prevent escalation to churn</p>
+                        <p><strong>Priority 3:</strong> Onboarding optimization - ensure 5+ features used in first 30 days</p>
+                        <p><strong>Expected Impact:</strong> -35% churn rate (from 45% to 29%)</p>
+                        <span class="confidence">86% Confidence</span>
+                    </div>
+                `;
+            } else {
+                insights += `
+                    <div class="insight">
+                        <h3>✅ Causal Analysis Complete</h3>
+                        <p><strong>Data Analyzed:</strong> Your custom dataset</p>
+                        <p><strong>Relationships Found:</strong> Multiple causal pathways identified</p>
+                        <p><strong>Next Steps:</strong> Review the causal chains and validate assumptions with domain knowledge.</p>
+                        <span class="confidence">High Quality</span>
+                    </div>
+
+                    <div class="insight">
+                        <h3>💡 General Recommendations</h3>
+                        <p>1. Identify your key outcome variables (revenue, retention, etc.)</p>
+                        <p>2. Map potential causes (marketing, product features, support quality)</p>
+                        <p>3. Collect time-series data to establish temporal ordering</p>
+                        <p>4. Test interventions with A/B experiments to validate causality</p>
+                    </div>
+                `;
+            }
+
+            insights += `
+                <div class="insight" style="background: #fff3cd; border-left-color: #ffc107;">
+                    <h3>📋 Key Assumptions</h3>
+                    <p>✓ No unmeasured confounders affecting the relationships</p>
+                    <p>✓ Temporal precedence: causes occur before effects</p>
+                    <p>✓ Stable unit treatment value assumption (SUTVA)</p>
+                    <p><strong>Validation:</strong> Consider A/B testing to confirm causal effects before large-scale implementation.</p>
+                </div>
+            `;
+
+            return insights;
+        }
+
+        // Auto-resize textarea
+        const textarea = document.getElementById('dataInput');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    </script>
+</body>
+</html>
