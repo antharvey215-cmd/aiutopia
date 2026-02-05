@@ -787,6 +787,17 @@ def compute_conformal_intervals(outcomes: Dict) -> Dict:
 # HEALTH CHECK
 # =============================================================================
 
+@app.get("/")
+async def root():
+    """Serve the main web interface"""
+    try:
+        return FileResponse("index.html", media_type="text/html")
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="index.html not found. Please ensure index.html is in the root directory of your deployment."
+        )
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
